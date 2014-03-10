@@ -325,7 +325,6 @@ class AddRule(forms.SelfHandlingForm):
             cleaned_data['ip_protocol'] = self.rules[rule_menu]['ip_protocol']
             cleaned_data['from_port'] = int(self.rules[rule_menu]['from_port'])
             cleaned_data['to_port'] = int(self.rules[rule_menu]['to_port'])
-            cleaned_data['direction'] = self.rules[rule_menu].get('direction')
 
         # NOTE(amotoki): There are two cases where cleaned_data['direction']
         # is empty: (1) Nova Security Group is used. Since "direction" is
