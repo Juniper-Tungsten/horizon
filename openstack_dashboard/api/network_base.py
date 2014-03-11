@@ -215,3 +215,11 @@ class SecurityGroupManager(object):
                                        new_security_group_ids):
         """Update security groups of a specified instance."""
         pass
+
+    @abc.abstractmethod
+    def list_all(self):
+        """Fetches a list all security groups.
+
+        A returned value is a list of SecurityGroup object.
+        """
+        pass

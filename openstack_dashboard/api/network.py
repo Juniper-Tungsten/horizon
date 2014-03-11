@@ -91,6 +91,10 @@ def security_group_list(request):
     return NetworkClient(request).secgroups.list()
 
 
+def security_group_list_all(request):
+    return NetworkClient(request).secgroups.list_all()
+
+
 def security_group_get(request, sg_id):
     return NetworkClient(request).secgroups.get(sg_id)
 

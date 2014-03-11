@@ -113,7 +113,7 @@ class AddRuleView(forms.ModalFormView):
         kwargs = super(AddRuleView, self).get_form_kwargs()
 
         try:
-            groups = api.network.security_group_list(self.request)
+            groups = api.network.security_group_list_all(self.request)
         except Exception:
             groups = []
             exceptions.handle(self.request,

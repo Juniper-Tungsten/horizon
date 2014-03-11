@@ -218,6 +218,10 @@ class SecurityGroupManager(network_base.SecurityGroupManager):
         tenant_id = self.request.user.tenant_id
         return self._list(tenant_id=tenant_id)
 
+    def list_all(self):
+        secgroups = self.client.list_security_groups()
+        return [SecurityGroup(sg) for sg in secgroups.get('security_groups')]
+
     def _sg_name_dict(self, sg_id, rules):
         """Create a mapping dict from secgroup id to its name."""
         related_ids = set([sg_id])
