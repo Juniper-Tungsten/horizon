@@ -97,6 +97,10 @@ class SetInstanceDetailsAction(workflows.Action):
                                initial=1,
                                help_text=_("Number of instances to launch."))
 
+    compute_hostname = forms.CharField(max_length=80, label=_("Compute Hostname"),
+                                        required=False,
+                                        help_text=_("Compute Host to launch Instance on"))
+
     source_type = forms.ChoiceField(label=_("Instance Boot Source"),
                                     required=True,
                                     choices=SOURCE_TYPE_CHOICES,
@@ -345,7 +349,8 @@ class SetInstanceDetails(workflows.Step):
     contributes = ("source_type", "source_id",
                    "availability_zone", "name", "count", "flavor",
                    "device_name",  # Can be None for an image.
-                   "delete_on_terminate")
+                   "delete_on_terminate",
+                   "compute_hostname")
 
     def prepare_action_context(self, request, context):
         if 'source_type' in context and 'source_id' in context:
@@ -605,6 +610,10 @@ class LaunchInstance(workflows.Workflow):
             nics = None
 
         avail_zone = context.get('availability_zone', None)
+
+        if (len(context['compute_hostname'])):
+            avail_zone = '%s:%s' %(context.get('availability_zone', None),
+                                    context['compute_hostname'])
 
         # Create port with Network Name and Port Profile
         # for the use with the plugin supporting port profiles.
