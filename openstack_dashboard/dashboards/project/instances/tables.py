@@ -419,7 +419,7 @@ class SimpleDisassociateIP(tables.Action):
                 fip = fips.pop()
                 api.network.floating_ip_disassociate(request,
                                                      fip.id, target_id)
-                api.network.tenant_floating_ip_release(request, fip.id)
+                #api.network.tenant_floating_ip_release(request, fip.id)
                 messages.success(request,
                                  _("Successfully disassociated "
                                    "floating IP: %s") % fip.ip)
