@@ -489,7 +489,7 @@ def server_get(request, instance_id):
     return Server(novaclient(request).servers.get(instance_id), request)
 
 
-def server_list(request, search_opts=None, all_tenants=False):
+def server_list(request, search_opts=None, all_tenants=False, detailed=True):
     page_size = request.session.get('horizon_pagesize',
                                     getattr(settings, 'API_RESULT_PAGE_SIZE',
                                             20))
@@ -506,7 +506,7 @@ def server_list(request, search_opts=None, all_tenants=False):
     else:
         search_opts['project_id'] = request.user.tenant_id
     servers = [Server(s, request)
-                for s in novaclient(request).servers.list(True, search_opts)]
+                for s in novaclient(request).servers.list(detailed, search_opts)]
 
     has_more_data = False
     if paginate and len(servers) > page_size:

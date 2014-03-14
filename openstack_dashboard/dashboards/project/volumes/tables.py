@@ -63,7 +63,7 @@ class CreateVolume(tables.LinkAction):
     classes = ("ajax-modal", "btn-create")
 
     def allowed(self, request, volume=None):
-        usages = quotas.tenant_quota_usages(request)
+        usages = quotas.tenant_quota_volume_usages(request)
         if usages['gigabytes']['available'] <= 0 or\
            usages['volumes']['available'] <= 0:
             if "disabled" not in self.classes:

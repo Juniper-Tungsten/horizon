@@ -155,7 +155,7 @@ class SetInstanceDetailsAction(workflows.Action):
 
         count = cleaned_data.get('count', 1)
         # Prevent launching more instances than the quota allows
-        usages = quotas.tenant_quota_usages(self.request)
+        usages = quotas.tenant_quota_instance_usages(self.request)
         available_count = usages['instances']['available']
         if available_count < count:
             error_message = ungettext_lazy('The requested instance '

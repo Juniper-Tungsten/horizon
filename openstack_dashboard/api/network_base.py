@@ -60,6 +60,14 @@ class FloatingIpManager(object):
         pass
 
     @abc.abstractmethod
+         def list_no_ports(self):
+             """Fetches a list all floating IPs, without listing device id's
+     
+             A returned value is a list of FloatingIp object.
+             """
+             pass
+
+    @abc.abstractmethod
     def get(self, floating_ip_id):
         """Fetches the floating IP.
 

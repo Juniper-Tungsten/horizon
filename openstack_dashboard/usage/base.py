@@ -102,7 +102,7 @@ class BaseUsage(object):
     def _get_neutron_usage(self, limits, resource_name):
         resource_map = {
             'floatingip': {
-                'api': api.network.tenant_floating_ip_list,
+                'api': api.network.tenant_floating_ip_list_no_ports,
                 'limit_name': 'totalFloatingIpsUsed',
                 'message': _('Unable to retrieve floating IP addresses.')
             },
