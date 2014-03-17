@@ -105,7 +105,16 @@ class NetworkAgentsTab(tabs.TableTab):
 
     def get_network_agents_data(self):
         try:
-            agents = neutron.agent_list(self.tab_group.request)
+            if neutron.is_extension_supported(self.tab_group.request, 'agent'):
+                try:
+                    agents = neutron.agent_list(self.tab_group.request)
+                except Exception:
+                    agents = []
+                    msg = _('Unable to get network agents list.')
+                    exceptions.check_message(["Connection", "refused"], msg)
+                    raise
+            else:
+                agents = []
         except Exception:
             agents = []
             msg = _('Unable to get network agents list.')
