@@ -445,19 +445,20 @@ def neutronclient(request):
     return c
 
 
-def network_list(request, **params):
+def network_list(request, expand_subnet=True, **params):
     LOG.debug("network_list(): params=%s" % (params))
     networks = neutronclient(request).list_networks(**params).get('networks')
     # Get subnet list to expand subnet info in network list.
-    subnets = subnet_list(request)
-    subnet_dict = SortedDict([(s['id'], s) for s in subnets])
-    # Expand subnet list from subnet_id to values.
-    for n in networks:
-        n['subnets'] = [subnet_dict.get(s) for s in n.get('subnets', [])]
+    if expand_subnet:
+        subnets = subnet_list(request)
+        subnet_dict = SortedDict([(s['id'], s) for s in subnets])
+        # Expand subnet list from subnet_id to values.
+        for n in networks:
+            n['subnets'] = [subnet_dict.get(s) for s in n.get('subnets', [])]
     return [Network(n) for n in networks]
 
 
-def network_list_for_tenant(request, tenant_id, **params):
+def network_list_for_tenant(request, tenant_id, expand_subnet=True, **params):
     """Return a network list available for the tenant.
     The list contains networks owned by the tenant and public networks.
     If requested_networks specified, it searches requested_networks only.
@@ -468,12 +469,12 @@ def network_list_for_tenant(request, tenant_id, **params):
     # If a user has admin role, network list returned by Neutron API
     # contains networks that do not belong to that tenant.
     # So we need to specify tenant_id when calling network_list().
-    networks = network_list(request, tenant_id=tenant_id,
+    networks = network_list(request, tenant_id=tenant_id, expand_subnet=expand_subnet,
                             shared=False, **params)
 
     # In the current Neutron API, there is no way to retrieve
     # both owner networks and public networks in a single API call.
-    networks += network_list(request, shared=True, **params)
+    networks += network_list(request, expand_subnet=expand_subnet, shared=True, **params)
 
     return networks
 
