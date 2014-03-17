@@ -143,8 +143,14 @@ class BaseUsage(object):
         if not api.base.is_service_enabled(self.request, 'network'):
             return
 
-        neutron_sg_used = \
-            api.neutron.is_security_group_extension_supported(self.request)
+        try:
+            neutron_sg_used = \
+                api.neutron.is_security_group_extension_supported(self.request)
+        except Exception:
+            neutron_sg_used = 0
+            neutron_quotas = None
+            msg = _('Unable to retrieve network quota information.')
+            exceptions.handle(self.request, msg)
 
         self._get_neutron_usage(self.limits, 'floatingip')
         if neutron_sg_used:
@@ -152,16 +158,17 @@ class BaseUsage(object):
 
         # Quotas are an optional extension in Neutron. If it isn't
         # enabled, assume the floating IP limit is infinite.
-        if api.neutron.is_quotas_extension_supported(self.request):
+        try:
+            api.neutron.is_quotas_extension_supported(self.request)
             try:
                 neutron_quotas = api.neutron.tenant_quota_get(self.request,
                                                               self.project_id)
             except Exception:
                 neutron_quotas = None
-                msg = _('Unable to retrieve network quota information.')
-                exceptions.handle(self.request, msg)
-        else:
+        except Exception:
             neutron_quotas = None
+            msg = _('Unable to retrieve network quota information.')
+            exceptions.handle(self.request, msg)
 
         self._set_neutron_limit(self.limits, neutron_quotas, 'floatingip')
         if neutron_sg_used:
