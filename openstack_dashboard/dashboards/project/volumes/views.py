@@ -79,7 +79,9 @@ class IndexView(tables.DataTableView, VolumeTableMixIn):
 
     def get_data(self):
         volumes = self._get_volumes()
-        instances = self._get_instances()
+        instances = []
+        if volumes:
+            instances = self._get_instances()
         self._set_id_if_nameless(volumes, instances)
         self._set_attachments_string(volumes, instances)
         return volumes
