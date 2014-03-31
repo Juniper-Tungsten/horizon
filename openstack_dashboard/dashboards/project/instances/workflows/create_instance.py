@@ -184,6 +184,10 @@ class SetInstanceDetailsAction(workflows.Action):
                                min_value=1,
                                initial=1,
                                help_text=_("Number of instances to launch."))
+    compute_hostname = forms.CharField(max_length=80, label=_("Compute Hostname"),
+                                        required=False,
+                                        help_text=_("Compute Host to launch Instance on"))
+
 
     class Meta:
         name = _("Details")
@@ -312,7 +316,8 @@ class SetInstanceDetailsAction(workflows.Action):
 
 class SetInstanceDetails(workflows.Step):
     action_class = SetInstanceDetailsAction
-    contributes = ("source_type", "source_id", "name", "count", "flavor")
+    contributes = ("source_type", "source_id", "name", "count", "flavor",
+                    "compute_hostname")
 
     def prepare_action_context(self, request, context):
         if 'source_type' in context and 'source_id' in context:
@@ -506,6 +511,10 @@ class LaunchInstance(workflows.Workflow):
         else:
             nics = None
 
+        availability_zone = None
+        if (len(context['compute_hostname'])):
+            availability_zone = 'nova:%s' %(context['compute_hostname'])
+
         try:
             api.nova.server_create(request,
                                    context['name'],
@@ -515,7 +524,7 @@ class LaunchInstance(workflows.Workflow):
                                    normalize_newlines(custom_script),
                                    context['security_group_ids'],
                                    dev_mapping,
-                                   nics=nics,
+                                   nics=nics, availability_zone=availability_zone,
                                    instance_count=int(context['count']))
             return True
         except:
