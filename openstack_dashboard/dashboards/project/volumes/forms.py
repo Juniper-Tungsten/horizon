@@ -106,7 +106,7 @@ class CreateForm(forms.SelfHandlingForm):
             # error message when the quota is exceeded when trying to create
             # a volume, so we need to check for that scenario here before we
             # send it off to try and create.
-            usages = quotas.tenant_quota_usages(request)
+            usages = quotas.tenant_quota_volume_usages(request)
 
             snapshot_id = None
             if (data.get("snapshot_source", None)):

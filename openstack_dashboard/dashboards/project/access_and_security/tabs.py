@@ -91,7 +91,7 @@ class FloatingIPsTab(tabs.TableTab):
 
         instances = []
         try:
-            instances = nova.server_list(self.request, all_tenants=True)
+            instances = nova.server_list(self.request, detailed=False)
         except:
             exceptions.handle(self.request,
                         _('Unable to retrieve instance list.'))

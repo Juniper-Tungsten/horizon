@@ -130,13 +130,27 @@ class FloatingIpManager(network.FloatingIpManager):
         fips = fips.get('floatingips')
         # Get port list to add instance_id to floating IP list
         # instance_id is stored in device_id attribute
-        ports = port_list(self.request, tenant_id=tenant_id)
+        ports = []
+        if len(fips):
+            ports = port_list(self.request, tenant_id=tenant_id)
         device_id_dict = SortedDict([(p['id'], p['device_id']) for p in ports])
+        device_id_len = len(device_id_dict)
         for fip in fips:
-            if fip['port_id']:
+            if fip['port_id'] and device_id_len:
                 fip['instance_id'] = device_id_dict[fip['port_id']]
             else:
                 fip['instance_id'] = None
+        return [FloatingIp(fip) for fip in fips]
+
+    def list_no_ports(self):
+        tenant_id = self.request.user.tenant_id
+        # In Quantum, list_floatingips returns Floating IPs from all tenants
+        # when the API is called with admin role, so we need to filter them
+        # with tenant_id.
+        # In most of the cases FIP list doesn't need port list, we return 
+        # only FIP list
+        fips = self.client.list_floatingips(tenant_id=tenant_id)
+        fips = fips.get('floatingips')
         return [FloatingIp(fip) for fip in fips]
 
     def get(self, floating_ip_id):
@@ -174,7 +188,7 @@ class FloatingIpManager(network.FloatingIpManager):
     def list_targets(self):
         tenant_id = self.request.user.tenant_id
         ports = port_list(self.request, tenant_id=tenant_id)
-        servers = nova.server_list(self.request)
+        servers = nova.server_list(self.request, detailed=False)
         server_dict = SortedDict([(s.id, s.name) for s in servers])
         targets = []
         for p in ports:

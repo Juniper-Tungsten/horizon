@@ -63,7 +63,7 @@ class AssociateIPAction(workflows.Action):
 
     def populate_ip_id_choices(self, request, context):
         try:
-            ips = api.network.tenant_floating_ip_list(self.request)
+            ips = api.network.tenant_floating_ip_list_no_ports(self.request)
         except:
             redirect = reverse('horizon:project:access_and_security:index')
             exceptions.handle(self.request,

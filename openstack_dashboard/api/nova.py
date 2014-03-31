@@ -361,7 +361,7 @@ def server_get(request, instance_id):
     return Server(novaclient(request).servers.get(instance_id), request)
 
 
-def server_list(request, search_opts=None, all_tenants=False):
+def server_list(request, search_opts=None, all_tenants=False, detailed=True):
     if search_opts is None:
         search_opts = {}
     if all_tenants:
@@ -369,7 +369,7 @@ def server_list(request, search_opts=None, all_tenants=False):
     else:
         search_opts['project_id'] = request.user.tenant_id
     return [Server(s, request)
-            for s in novaclient(request).servers.list(True, search_opts)]
+            for s in novaclient(request).servers.list(detailed, search_opts)]
 
 
 def server_console_output(request, instance_id, tail_length=None):

@@ -98,7 +98,7 @@ class CreateView(forms.ModalFormView):
     def get_context_data(self, **kwargs):
         context = super(CreateView, self).get_context_data(**kwargs)
         try:
-            context['usages'] = quotas.tenant_quota_usages(self.request)
+            context['usages'] = quotas.tenant_quota_volume_usages(self.request)
         except:
             exceptions.handle(self.request)
         return context

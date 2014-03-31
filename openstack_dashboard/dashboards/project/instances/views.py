@@ -68,18 +68,21 @@ class IndexView(tables.DataTableView):
                                         for flavor in flavors])
             # Loop through instances to get flavor info.
             for instance in instances:
-                try:
-                    flavor_id = instance.flavor["id"]
-                    if flavor_id in full_flavors:
-                        instance.full_flavor = full_flavors[flavor_id]
-                    else:
-                        # If the flavor_id is not in full_flavors list,
-                        # get it via nova api.
-                        instance.full_flavor = api.nova.flavor_get(
-                            self.request, flavor_id)
-                except:
-                    msg = _('Unable to retrieve instance size information.')
-                    exceptions.handle(self.request, msg)
+                if hasattr(instance, 'flavor'):
+                    try:
+                        flavor_id = instance.flavor["id"]
+                        if flavor_id in full_flavors:
+                            instance.full_flavor = full_flavors[flavor_id]
+                        else:
+                            # If the flavor_id is not in full_flavors list,
+                            # get it via nova api.
+                            instance.full_flavor = api.nova.flavor_get(
+                                self.request, flavor_id)
+                    except:
+                        msg = _('Unable to retrieve instance size information.')
+                        exceptions.handle(self.request, msg)
+                else:
+                    instance.full_flavor = '-'
         return instances
 
 

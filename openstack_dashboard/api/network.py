@@ -141,6 +141,10 @@ def tenant_floating_ip_list(request):
     return NetworkClient(request).floating_ips.list()
 
 
+def tenant_floating_ip_list_no_ports(request):
+    return NetworkClient(request).floating_ips.list_no_ports()
+
+
 def tenant_floating_ip_get(request, floating_ip_id):
     return NetworkClient(request).floating_ips.get(floating_ip_id)
 
