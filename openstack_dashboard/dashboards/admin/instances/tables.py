@@ -17,7 +17,9 @@
 
 import logging
 
+from django.core.urlresolvers import reverse
 from django.template.defaultfilters import title
+from django.utils.http import urlencode
 from django.utils.translation import ugettext_lazy as _
 
 from horizon import tables
@@ -53,6 +55,17 @@ class MigrateInstance(tables.BatchAction):
 
     def action(self, request, obj_id):
         api.nova.server_migrate(request, obj_id)
+
+
+class LiveMigrateInstance(tables.LinkAction):
+    name = "live_migrate"
+    verbose_name = _("Live Migrate Instance")
+    url = "horizon:admin:instances:live_migrate"
+    classes = ("ajax-modal", "btn-migrate", "btn-danger")
+
+    def allowed(self, request, instance):
+        return ((instance.status in project_tables.ACTIVE_STATES)
+                and not project_tables.is_deleting(instance))
 
 
 class AdminUpdateRow(UpdateRow):
@@ -118,5 +131,7 @@ class AdminInstancesTable(tables.DataTable):
         row_class = AdminUpdateRow
         row_actions = (ConfirmResize, RevertResize, AdminEditInstance,
                        ConsoleLink, LogLink, CreateSnapshot, TogglePause,
-                       ToggleSuspend, MigrateInstance, SoftRebootInstance,
+                       ToggleSuspend, MigrateInstance, 
+                       LiveMigrateInstance,
+                       SoftRebootInstance,
                        RebootInstance, TerminateInstance)
