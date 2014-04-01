@@ -188,7 +188,6 @@ def tenant_quota_volume_usages(request):
 
     return usages
 
-
 @memoized
 def tenant_quota_instance_usages(request):
     # Get our quotas and construct our usage object.
@@ -201,7 +200,7 @@ def tenant_quota_instance_usages(request):
 
     # Get our usages.
     flavors = dict([(f.id, f) for f in nova.flavor_list(request)])
-    instances, has_more = nova.server_list(request)
+    instances = nova.server_list(request)
     # Fetch deleted flavors if necessary.
     missing_flavors = [instance.flavor['id'] for instance in instances
                        if instance.flavor['id'] not in flavors]
@@ -209,7 +208,7 @@ def tenant_quota_instance_usages(request):
         if missing not in flavors:
             try:
                 flavors[missing] = nova.flavor_get(request, missing)
-            except Exception:
+            except:
                 flavors[missing] = {}
                 exceptions.handle(request, ignore=True)
 
