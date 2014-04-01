@@ -27,11 +27,15 @@ from django.utils.datastructures import SortedDict
 from django.utils.translation import ugettext_lazy as _
 
 from horizon import exceptions
+from horizon import forms
+from horizon import tabs
+from horizon import workflows
+from horizon import exceptions
 from horizon import tables
 
 from openstack_dashboard import api
 from openstack_dashboard.dashboards.admin.instances \
-    import forms as project_forms
+        import forms as project_forms
 from openstack_dashboard.dashboards.admin.instances.tables import \
         AdminInstancesTable
 from openstack_dashboard.dashboards.project.instances.views import \

@@ -449,7 +449,8 @@ def server_live_migrate(request, instance_id, host, block_migration=False,
                         disk_over_commit=False):
     novaclient(request).servers.live_migrate(instance_id, host,
                                              block_migration,
-  
+                                             disk_over_commit)
+
 
 def server_confirm_resize(request, instance_id):
     novaclient(request).servers.confirm_resize(instance_id)

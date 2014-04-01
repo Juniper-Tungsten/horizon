@@ -20,7 +20,7 @@
 
 from django.conf.urls.defaults import url, patterns
 
-from .views import DetailView, AdminIndexView, AdminUpdateView
+from .views import DetailView, AdminIndexView, AdminUpdateView, LiveMigrateView
 
 
 INSTANCES = r'^(?P<instance_id>[^/]+)/%s$'
@@ -33,6 +33,6 @@ urlpatterns = patterns('openstack_dashboard.dashboards.admin.instances.views',
     url(INSTANCES % 'console', 'console', name='console'),
     url(INSTANCES % 'vnc', 'vnc', name='vnc'),
     url(INSTANCES % 'spice', 'spice', name='spice'),
-    url(INSTANCES % 'live_migrate', views.LiveMigrateView.as_view(),
+    url(INSTANCES % 'live_migrate', LiveMigrateView.as_view(),
         name='live_migrate'),
 )
